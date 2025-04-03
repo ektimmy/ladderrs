@@ -1,0 +1,51 @@
+use ratatui::{
+    Frame,
+    prelude::{
+        Constraint,
+        Direction,
+        Layout,
+        Rect,
+    },
+    widgets::Borders,
+};
+use std::rc::Rc;
+
+fn map_outline(f: &Frame) -> Rc<[Rect]> {
+    
+    let layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(vec![
+            Constraint::Percentage(20),
+            Constraint::Percentage(60),
+            Constraint::Percentage(20),
+        ])
+        .split(f.area());
+    return layout
+}
+
+fn map_outline_with_error(err: &String, f: &Frame) -> Rc<[Rect]> {
+    
+    let errorbox = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![
+            Constraint::Percentage(20),
+            Constraint::Percentage(80),
+        ])
+        .split(f.area());
+    
+    let layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(vec![
+            Constraint::Percentage(20),
+            Constraint::Percentage(60),
+            Constraint::Percentage(20),
+        ])
+        .split(errorbox[1].area());
+
+    frame.render_widget(
+        Paragraph::new(err)
+            .block(Block::new().borders(Borders::ALL)),
+        errorbox[0]);
+
+    return layout
+}
