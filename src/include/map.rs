@@ -21,6 +21,7 @@ pub struct Map {
     inputs: Vec<String>,
     outputs: Vec<String>,
     workspace: HashMap<String, Vec<String>>,
+    pub error: Option<String>,
 }
 
 impl Map {
@@ -29,6 +30,7 @@ impl Map {
             inputs: Vec::new(),
             outputs: Vec::new(),
             workspace: HashMap::new(),
+            error: None,  
         }
     }
     fn map_outline(&mut self, f: &mut Frame) { 
@@ -43,7 +45,7 @@ impl Map {
         self.render_workspace(f, layout[1]);
         self.render_outputs(f, layout[2]);
     }
-    fn map_outline_with_error(&mut self, f: &mut Frame, errmsg: &str) {
+    fn map_outline_with_error(&mut self, f: &mut Frame, errmsg: String) {
         let err = &Layout::default()
             .direction(Direction::Vertical)
             .constraints(vec![
@@ -63,9 +65,9 @@ impl Map {
         self.render_workspace(f, layout[1]);
         self.render_outputs(f, layout[2]); 
     }
-    pub fn generate_map(mut self, mut terminal: DefaultTerminal, err: Option<&str>) -> Result<(), std::io::Error> {
+    pub fn generate_map(mut self, mut terminal: DefaultTerminal) -> Result<Map, std::io::Error> {
         loop {
-            match err {
+            match self.error.clone() {
                 None => {
                     terminal.draw(|f| self.map_outline(f))?;
                 }, 
@@ -77,9 +79,9 @@ impl Map {
                 break;
             };
         };
-        return Ok(())
+        return Ok(self)
     }
-    fn render_errmsg(&self, f: &mut Frame, area: Rect, errmsg: &str) {
+    fn render_errmsg(&self, f: &mut Frame, area: Rect, errmsg: String) {
         let msgbar = Paragraph::new(Text::from(errmsg))
             .block(Block::bordered());
         f.render_widget(msgbar, area);

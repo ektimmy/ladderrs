@@ -3,15 +3,13 @@ mod include;
 use crate::include::map::Map;
 
 fn main() {
-    let ok_result = Map::new(); 
+    let map = Map::new(); 
     let ok_terminal = ratatui::init();
-    let ok = None;
-    ok_result.generate_map(ok_terminal, ok);
+    let mut map2 = map.generate_map(ok_terminal).unwrap();
     ratatui::restore();    
    
-    let bad_result = Map::new();
-    let bad = Some("this is a test of an error.");
+    map2.error = Some(String::from("this is a test of an error."));
     let bad_terminal = ratatui::init();
-    bad_result.generate_map(bad_terminal, bad);
+    map2.generate_map(bad_terminal);
     ratatui::restore();
 }
